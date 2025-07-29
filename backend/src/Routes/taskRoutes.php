@@ -15,5 +15,6 @@ return function (App $app) {
   $app->get('/tasks/{id}', [$controller, 'findOne']);
   $app->post('/tasks', [$controller, 'create']);
   $app->put('/tasks/{id}', [$controller, 'update']);
+  $app->patch('/tasks/{id}/status', [$controller, 'changeStatus']);
   $app->delete('/tasks/{id}', [$controller, 'delete']);
 };

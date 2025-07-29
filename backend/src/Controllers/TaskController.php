@@ -65,9 +65,9 @@ class TaskController extends BaseController
     $id = $args['id'];
 
     $rawData = $request->getParsedBody();
-    $data = $this->sanitize($rawData, ['title', 'description', 'status']);
+    $data = $this->sanitize($rawData, ['title', 'description']);
 
-    $error = $this->validateRequired($data, ['title', 'description', 'status']);
+    $error = $this->validateRequired($data, ['title', 'description']);
     if ($error) {
       return $this->json($response, 400, false, $error);
     }
@@ -84,6 +84,27 @@ class TaskController extends BaseController
 
     $task = $this->model->findById($id);
     return $this->json($response, 200, true, 'Task atualizada com sucesso', $task);
+  }
+
+  public function changeStatus(Request $request, Response $response, $args): Response
+  {
+    $id = $args['id'];
+    $data = $request->getParsedBody();
+
+    $status = $data['status'];
+
+    $existingTask = $this->model->findById($id);
+    if (!$existingTask) {
+      return $this->json($response, 404, false, 'Task não encontrada');
+    }
+
+    $success = $this->model->updateStatus($id, $data);
+    if (!$success) {
+      return $this->json($response, 500, false, 'Erro ao atualizar a task');
+    }
+
+    $task = $this->model->findById($id);
+    return $this->json($response, 200, true, 'Status atualizada com sucesso', $task);
   }
 
   public function delete(Request $request, Response $response, $args): Response

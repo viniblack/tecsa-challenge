@@ -41,11 +41,19 @@ class TaskModel
 
   public function update($id, $data)
   {
-    $stmt = $this->db->prepare("UPDATE tasks SET title = :title, description = :description, status = :status WHERE id = :id");
+    $stmt = $this->db->prepare("UPDATE tasks SET title = :title, description = :description WHERE id = :id");
     return $stmt->execute([
       ':id' => $id,
       ':title' => $data['title'],
       ':description' => $data['description'],
+    ]);
+  }
+
+  public function updateStatus($id, $data)
+  {
+    $stmt = $this->db->prepare("UPDATE tasks SET status = :status WHERE id = :id");
+    return $stmt->execute([
+      ':id' => $id,
       ':status' => $data['status'],
     ]);
   }

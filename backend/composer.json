@@ -3,7 +3,8 @@
     "slim/slim": "^4.0",
     "slim/psr7": "^1.0",
     "vlucas/phpdotenv": "^5.5",
-    "selective/basepath": "^2.0"
+    "selective/basepath": "^2.0",
+    "tuupola/cors-middleware": "^1.5"
   },
   "autoload": {
     "psr-4": {

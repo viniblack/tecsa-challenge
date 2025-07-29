@@ -9,7 +9,7 @@ require __DIR__ . '/../vendor/autoload.php';
 $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
 
-$app->addRoutingMiddleware(); // deve vir antes do CORS
+$app->addRoutingMiddleware();
 $app->add(new CorsMiddleware([
   "origin" => ["*"],
   "methods" => ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

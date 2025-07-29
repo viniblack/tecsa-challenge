@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
       createTask(task);
     }
   });
+
+  document.querySelector("#open-create-task").addEventListener("click", () => {
+    resetForm();
+  });
 });
 
 function fetchTasks() {
@@ -35,7 +39,7 @@ function renderTasks(tasks) {
 
     tr.innerHTML = `
       <td>${task.id}</td>
-      <td>${task.title}</td>
+      <td >${task.title}</td>
       <td>${task.description || ""}</td>
       <td>
         <select
@@ -99,10 +103,24 @@ function createTask(task) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(task),
-  }).then(() => {
-    resetForm();
-    fetchTasks();
-  });
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      if (response.success) {
+        resetForm();
+        fetchTasks();
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("createTaskModal")
+        );
+        if (modal) modal.hide();
+        showAlert(response.message, "success");
+      } else {
+        showAlert(response.message, "danger");
+      }
+    })
+    .catch(() => {
+      showAlert("Erro ao criar tarefa.", "danger");
+    });
 }
 
 function updateTask(id, task) {
@@ -110,15 +128,41 @@ function updateTask(id, task) {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(task),
-  }).then(() => {
-    resetForm();
-    fetchTasks();
-  });
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      if (response.success) {
+        resetForm();
+        fetchTasks();
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("createTaskModal")
+        );
+        if (modal) modal.hide();
+        showAlert(response.message, "success");
+      } else {
+        showAlert(response.message, "danger");
+      }
+    })
+    .catch(() => {
+      showAlert("Erro ao atualizar tarefa.", "danger");
+    });
 }
 
 function deleteTask(id) {
   if (confirm("Tem certeza que deseja excluir?")) {
-    fetch(`${API_URL}/${id}`, { method: "DELETE" }).then(() => fetchTasks());
+    fetch(`${API_URL}/${id}`, { method: "DELETE" })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          fetchTasks();
+          showAlert(response.message, "success");
+        } else {
+          showAlert(response.message, "danger");
+        }
+      })
+      .catch(() => {
+        showAlert("Erro ao excluir tarefa.", "danger");
+      });
   }
 }
 
@@ -135,14 +179,31 @@ function editTask(id) {
   fetch(`${API_URL}/${id}`)
     .then((res) => res.json())
     .then((task) => {
-      document.getElementById("task-id").value = task.data.id;
-      document.getElementById("title").value = task.data.title;
-      document.getElementById("description").value = task.data.description;
+      document.querySelector("#task-id").value = task.data.id;
+      document.querySelector("#title").value = task.data.title;
+      document.querySelector("#description").value = task.data.description;
     });
 }
 
 function resetForm() {
-  document.getElementById("task-id").value = "";
-  document.getElementById("title").value = "";
-  document.getElementById("description").value = "";
+  document.querySelector("#task-id").value = "";
+  document.querySelector("#title").value = "";
+  document.querySelector("#description").value = "";
+}
+
+function showAlert(message, type = "success") {
+  const alertContainer = document.getElementById("alert-container");
+  alertContainer.innerHTML = `
+    <div class="alert alert-${type} alert-dismissible fade show position-absolute" style="right: 0; top: 1vh;" role="alert">
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const alert = bootstrap.Alert.getOrCreateInstance(
+      alertContainer.querySelector(".alert")
+    );
+    alert.close();
+  }, 4000);
 }

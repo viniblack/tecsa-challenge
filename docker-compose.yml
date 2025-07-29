@@ -1,10 +1,12 @@
 services:
-  app:
-    build: .
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "9000:80"
     volumes:
-      - .:/var/www/html
+      - ./backend:/var/www/html
     depends_on:
       - mysql
     environment:
@@ -22,7 +24,16 @@ services:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./backend/sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
 
 volumes:
   db_data:

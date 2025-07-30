@@ -41,7 +41,6 @@ Cada tarefa possui os seguintes campos:
 ```bash
 git clone https://github.com/viniblack/tecsa-challenge.git
 cd tecsa-challenge
-cp backend/.env.example backend/.env
 ```
 
 2. **Defina as variáveis de ambiente:**

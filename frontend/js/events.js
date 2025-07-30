@@ -18,11 +18,35 @@ export function setupEventListeners() {
     e.preventDefault();
 
     const id = document.querySelector("#task-id").value;
-    const title = document.querySelector("#title").value;
-    const description = document.querySelector("#description").value;
-    const task = { title, description };
+    const titleInput = document.querySelector("#title");
+    const descInput = document.querySelector("#description");
 
+    const title = titleInput.value.trim();
+    const description = descInput.value.trim();
+
+    let hasError = false;
+
+    titleInput.classList.remove("is-invalid");
+    descInput.classList.remove("is-invalid");
+
+    if (title === "") {
+      titleInput.classList.add("is-invalid");
+      hasError = true;
+    }
+
+    if (description === "") {
+      descInput.classList.add("is-invalid");
+      hasError = true;
+    }
+
+    if (hasError) {
+      showAlert("Preencha todos os campos corretamente.", "danger");
+      return;
+    }
+
+    const task = { title, description };
     let response;
+
     if (id) {
       response = await updateTask(id, task);
     } else {

@@ -1,10 +1,14 @@
-import { editTaskHandler } from "./events.js";
-import { updateTaskStatus } from "./api.js";
-import { showAlert } from "./dom.js";
-
 export function renderTasks(tasks) {
   const tbody = document.querySelector("#task-table-body");
   tbody.innerHTML = "";
+  if (tasks.length === 0) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td colspan="5" class="text-center text-muted">Sem tarefas cadastradas</td>
+    `;
+    tbody.appendChild(tr);
+    return;
+  }
 
   tasks.forEach((task) => {
     const tr = document.createElement("tr");
